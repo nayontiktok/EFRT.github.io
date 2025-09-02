@@ -12,7 +12,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="MonApp">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/1.png">
 
   <style>
     body {
@@ -30,38 +30,36 @@
     p { font-size:1rem; }
   </style>
 </head>
-  <script>
-  // Vérifie que le navigateur supporte les notifications
-  if ("Notification" in window && "serviceWorker" in navigator) {
-    
-    // Demande la permission à l'utilisateur
-    Notification.requestPermission().then(permission => {
-      if (permission === "granted") {
-        // Affiche la notification dès le lancement
-        navigator.serviceWorker.ready.then(registration => {
-          registration.showNotification("Bienvenue sur MonApp !", {
-            body: "Ta PWA est maintenant active 🎉",
-            icon: "icons/1.png",
-            vibrate: [100, 50, 100],
-            tag: "welcome-notification"
-          });
-        });
-      }
-    });
-  }
-</script>
 <body>
   <div>
     <h1>Bienvenue sur MonApp 🌐</h1>
     <p>Ajoutez-moi à l'écran d'accueil pour une expérience app !</p>
   </div>
 
+  <!-- Enregistrement du Service Worker -->
   <script>
-    // Enregistrement du service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
       .then(() => console.log('Service Worker enregistré ✅'))
       .catch(err => console.log('Erreur SW:', err));
+    }
+  </script>
+
+  <!-- Notification au lancement -->
+  <script>
+    if ("Notification" in window && "serviceWorker" in navigator) {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification("Bienvenue sur MonApp !", {
+              body: "Ta PWA est maintenant active 🎉",
+              icon: "icons/1.png",
+              vibrate: [100, 50, 100],
+              tag: "welcome-notification"
+            });
+          });
+        }
+      });
     }
   </script>
 </body>
