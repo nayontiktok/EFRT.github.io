@@ -30,6 +30,26 @@
     p { font-size:1rem; }
   </style>
 </head>
+  <script>
+  // Vérifie que le navigateur supporte les notifications
+  if ("Notification" in window && "serviceWorker" in navigator) {
+    
+    // Demande la permission à l'utilisateur
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        // Affiche la notification dès le lancement
+        navigator.serviceWorker.ready.then(registration => {
+          registration.showNotification("Bienvenue sur MonApp !", {
+            body: "Ta PWA est maintenant active 🎉",
+            icon: "icons/1.png",
+            vibrate: [100, 50, 100],
+            tag: "welcome-notification"
+          });
+        });
+      }
+    });
+  }
+</script>
 <body>
   <div>
     <h1>Bienvenue sur MonApp 🌐</h1>
