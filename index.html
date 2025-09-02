@@ -28,6 +28,21 @@
     }
     h1 { font-size:2rem; }
     p { font-size:1rem; }
+
+    /* Toast notification pour iOS */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      display: none;
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
@@ -35,6 +50,9 @@
     <h1>Bienvenue sur MonApp 🌐</h1>
     <p>Ajoutez-moi à l'écran d'accueil pour une expérience app !</p>
   </div>
+
+  <!-- Toast HTML pour iOS -->
+  <div id="toast">Bienvenue sur MonApp 🎉</div>
 
   <!-- Enregistrement du Service Worker -->
   <script>
@@ -47,20 +65,31 @@
 
   <!-- Notification au lancement -->
   <script>
-    if ("Notification" in window && "serviceWorker" in navigator) {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          navigator.serviceWorker.ready.then(reg => {
-            reg.showNotification("Bienvenue sur MonApp !", {
-              body: "Ta PWA est maintenant active 🎉",
-              icon: "icons/1.png",
-              vibrate: [100, 50, 100],
-              tag: "welcome-notification"
+    // Toast pour iOS
+    window.addEventListener('load', () => {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (isIOS) {
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000); // disparait après 3s
+      }
+
+      // Notification Android via Service Worker
+      if ("Notification" in window && "serviceWorker" in navigator) {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted" && !isIOS) {
+            navigator.serviceWorker.ready.then(reg => {
+              reg.showNotification("Bienvenue sur MonApp !", {
+                body: "Ta PWA est maintenant active 🎉",
+                icon: "icons/1.png",
+                vibrate: [100, 50, 100],
+                tag: "welcome-notification"
+              });
             });
-          });
-        }
-      });
-    }
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>
