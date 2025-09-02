@@ -3,93 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MonApp</title>
-  
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json">
-  
-  <!-- iOS support -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="MonApp">
-  <link rel="apple-touch-icon" href="icons/1.png">
-
+  <title>Dashboard Educatif - Fake Ransomware</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      margin:0;
-      font-family:sans-serif;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      background:#6A0DAD;
-      color:white;
-      text-align:center;
-    }
-    h1 { font-size:2rem; }
-    p { font-size:1rem; }
-
-    /* Toast notification pour iOS */
-    #toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 1rem;
-      display: none;
-      z-index: 1000;
-    }
+    body { font-family: sans-serif; background:#111; color:white; padding:20px; }
+    h1 { text-align:center; }
+    .stats { display:flex; justify-content:space-around; margin:20px 0; }
+    .card { background:#222; padding:20px; border-radius:10px; text-align:center; width:200px; }
+    ul { list-style:none; padding:0; }
+    li { padding:5px 0; }
   </style>
 </head>
 <body>
-  <div>
-    <h1>Bienvenue sur MonApp 🌐</h1>
-    <p>Ajoutez-moi à l'écran d'accueil pour une expérience app !</p>
+  <h1>Dashboard Educatif - Fake Ransomware Discord</h1>
+
+  <div class="stats">
+    <div class="card">
+      <h2 id="total">0</h2>
+      <p>Personnes “infectées”</p>
+    </div>
+    <div class="card">
+      <h2 id="online">0</h2>
+      <p>Actives maintenant</p>
+    </div>
   </div>
 
-  <!-- Toast HTML pour iOS -->
-  <div id="toast">Bienvenue sur MonApp 🎉</div>
+  <canvas id="chart" width="400" height="150"></canvas>
 
-  <!-- Enregistrement du Service Worker -->
+  <h2>Liste des utilisateurs simulés</h2>
+  <ul id="userList"></ul>
+
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-      .then(() => console.log('Service Worker enregistré ✅'))
-      .catch(err => console.log('Erreur SW:', err));
-    }
-  </script>
+    // Fake data
+    const users = [
+      "FakeUser#1234",
+      "DemoBot#5678",
+      "TestUser#9012",
+      "DiscordNoob#3456",
+      "EduUser#7890"
+    ];
 
-  <!-- Notification au lancement -->
-  <script>
-    // Toast pour iOS
-    window.addEventListener('load', () => {
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      if (isIOS) {
-        const toast = document.getElementById('toast');
-        toast.style.display = 'block';
-        setTimeout(() => toast.style.display = 'none', 3000); // disparait après 3s
-      }
+    const totalElem = document.getElementById('total');
+    const onlineElem = document.getElementById('online');
+    const userList = document.getElementById('userList');
 
-      // Notification Android via Service Worker
-      if ("Notification" in window && "serviceWorker" in navigator) {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted" && !isIOS) {
-            navigator.serviceWorker.ready.then(reg => {
-              reg.showNotification("Bienvenue sur MonApp !", {
-                body: "Ta PWA est maintenant active 🎉",
-                icon: "icons/1.png",
-                vibrate: [100, 50, 100],
-                tag: "welcome-notification"
-              });
-            });
-          }
-        });
+    let total = 0;
+    let online = 0;
+
+    // Chart setup
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Infections simulées',
+          data: [],
+          borderColor: 'red',
+          backgroundColor: 'rgba(255,0,0,0.2)',
+          fill:true
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero:true } }
       }
     });
+
+    // Simulate updates
+    function addFakeInfection() {
+      const user = users[Math.floor(Math.random() * users.length)];
+      total++;
+      online = Math.floor(Math.random() * total) + 1;
+
+      totalElem.textContent = total;
+      onlineElem.textContent = online;
+
+      // update user list
+      const li = document.createElement('li');
+      li.textContent = user;
+      userList.prepend(li);
+      if(userList.children.length > 10) userList.removeChild(userList.lastChild);
+
+      // update chart
+      const now = new Date().toLocaleTimeString();
+      chart.data.labels.push(now);
+      chart.data.datasets[0].data.push(total);
+      if(chart.data.labels.length > 10){
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+      }
+      chart.update();
+    }
+
+    // Run simulation every 2s
+    setInterval(addFakeInfection, 2000);
   </script>
 </body>
 </html>
