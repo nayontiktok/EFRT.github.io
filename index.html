@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MonApp</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- iOS support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MonApp">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <style>
+    body {
+      margin:0;
+      font-family:sans-serif;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      background:#6A0DAD;
+      color:white;
+      text-align:center;
+    }
+    h1 { font-size:2rem; }
+    p { font-size:1rem; }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>Bienvenue sur MonApp 🌐</h1>
+    <p>Ajoutez-moi à l'écran d'accueil pour une expérience app !</p>
+  </div>
+
+  <script>
+    // Enregistrement du service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('Service Worker enregistré ✅'))
+      .catch(err => console.log('Erreur SW:', err));
+    }
+  </script>
+</body>
+</html>
