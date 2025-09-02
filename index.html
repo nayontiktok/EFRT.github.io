@@ -1,103 +1,58 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Educatif - Fake Ransomware</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { font-family: sans-serif; background:#111; color:white; padding:20px; }
-    h1 { text-align:center; }
-    .stats { display:flex; justify-content:space-around; margin:20px 0; }
-    .card { background:#222; padding:20px; border-radius:10px; text-align:center; width:200px; }
-    ul { list-style:none; padding:0; }
-    li { padding:5px 0; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Infectés</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f2f2f2; }
+    </style>
 </head>
 <body>
-  <h1>Dashboard Educatif - Fake Ransomware Discord</h1>
+    <h1>Personnes infectées par le malware Discord</h1>
+    <table id="infectees">
+        <thead>
+            <tr>
+                <th>ID Utilisateur</th>
+                <th>Nom d'utilisateur</th>
+                <th>Date d'infection</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Les données seront insérées ici par JavaScript -->
+        </tbody>
+    </table>
 
-  <div class="stats">
-    <div class="card">
-      <h2 id="total">0</h2>
-      <p>Personnes “infectées”</p>
-    </div>
-    <div class="card">
-      <h2 id="online">0</h2>
-      <p>Actives maintenant</p>
-    </div>
-  </div>
+    <script>
+        // URL de l'API qui fournit les données des infectés
+        const apiUrl = 'https://ton-api.com/infectees';
 
-  <canvas id="chart" width="400" height="150"></canvas>
+        // Fonction pour récupérer les données de l'API et les afficher dans le tableau
+        async function fetchInfectees() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
 
-  <h2>Liste des utilisateurs simulés</h2>
-  <ul id="userList"></ul>
+                const tableBody = document.querySelector('#infectees tbody');
+                data.forEach(infectee => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${infectee.id}</td>
+                        <td>${infectee.username}</td>
+                        <td>${new Date(infectee.infection_date).toLocaleString()}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Erreur lors de la récupération des données:', error);
+            }
+        }
 
-  <script>
-    // Fake data
-    const users = [
-      "FakeUser#1234",
-      "DemoBot#5678",
-      "TestUser#9012",
-      "DiscordNoob#3456",
-      "EduUser#7890"
-    ];
-
-    const totalElem = document.getElementById('total');
-    const onlineElem = document.getElementById('online');
-    const userList = document.getElementById('userList');
-
-    let total = 0;
-    let online = 0;
-
-    // Chart setup
-    const ctx = document.getElementById('chart').getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Infections simulées',
-          data: [],
-          borderColor: 'red',
-          backgroundColor: 'rgba(255,0,0,0.2)',
-          fill:true
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: { y: { beginAtZero:true } }
-      }
-    });
-
-    // Simulate updates
-    function addFakeInfection() {
-      const user = users[Math.floor(Math.random() * users.length)];
-      total++;
-      online = Math.floor(Math.random() * total) + 1;
-
-      totalElem.textContent = total;
-      onlineElem.textContent = online;
-
-      // update user list
-      const li = document.createElement('li');
-      li.textContent = user;
-      userList.prepend(li);
-      if(userList.children.length > 10) userList.removeChild(userList.lastChild);
-
-      // update chart
-      const now = new Date().toLocaleTimeString();
-      chart.data.labels.push(now);
-      chart.data.datasets[0].data.push(total);
-      if(chart.data.labels.length > 10){
-        chart.data.labels.shift();
-        chart.data.datasets[0].data.shift();
-      }
-      chart.update();
-    }
-
-    // Run simulation every 2s
-    setInterval(addFakeInfection, 2000);
-  </script>
+        // Appel de la fonction pour récupérer et afficher les données
+        fetchInfectees();
+    </script>
 </body>
 </html>
